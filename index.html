@@ -6,18 +6,18 @@
     <title>Хто ти з біблійних персонажів?</title>
     <style>
         :root {
-            --bg-color: #1a1a24;
-            --card-bg: #252538;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
             --accent: #d4af37;
-            --text-color: #f5f5f7;
-            --text-muted: #a0a0b8;
+            --text-color: #000000;
+            --text-muted: #000000;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', Courier, Consolas, Monaco, monospace;
         }
 
         body {
@@ -38,7 +38,8 @@
         }
 
         h1 {
-            color: var(--accent);
+            color: var(--text-color);
+            font-style: italic;
             margin-bottom: 10px;
             font-size: 2rem;
             letter-spacing: 1px;
@@ -47,7 +48,7 @@
         .progress-bar {
             width: 100%;
             height: 6px;
-            background-color: #33334d;
+            background-color: #e0e0e0;
             border-radius: 3px;
             margin-bottom: 30px;
             overflow: hidden;
@@ -75,7 +76,7 @@
 
         .card {
             background-color: var(--card-bg);
-            border: 2px solid transparent;
+            border: 2px solid #000000;
             border-radius: 12px;
             padding: 30px 20px;
             cursor: pointer;
@@ -85,15 +86,16 @@
             justify-content: center;
             min-height: 160px;
             font-size: 1.1rem;
-            font-weight: 500;
+            font-weight: bold;
             line-height: 1.5;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            color: var(--text-color);
         }
 
         .card:hover {
             border-color: var(--accent);
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(212, 175, 55, 0.15);
+            box-shadow: 0 12px 24px rgba(212, 175, 55, 0.3);
         }
 
         .result-box {
@@ -101,15 +103,16 @@
             border-radius: 16px;
             padding: 40px 30px;
             display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid #33334d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #000000;
             animation: fadeIn 0.5s ease forwards;
         }
 
         .result-name {
             font-size: 2.5rem;
-            color: var(--accent);
+            color: var(--text-color);
             margin-bottom: 15px;
+            font-weight: bold;
         }
 
         .result-section {
@@ -118,9 +121,10 @@
         }
 
         .result-section h3 {
-            color: var(--accent);
+            color: var(--text-color);
             margin-bottom: 5px;
             font-size: 1.2rem;
+            font-weight: bold;
         }
 
         .result-section p {
@@ -131,8 +135,8 @@
         .btn-restart {
             margin-top: 30px;
             background-color: var(--accent);
-            color: #111;
-            border: none;
+            color: #000000;
+            border: 2px solid #000000;
             padding: 12px 30px;
             font-size: 1rem;
             font-weight: bold;
@@ -143,6 +147,7 @@
 
         .btn-restart:hover {
             opacity: 0.9;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
         }
 
         @keyframes fadeIn {
@@ -167,7 +172,7 @@
 
 <div class="container" style="max-width: 600px;">
     <div class="result-box" id="result-container">
-        <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-size: 0.9rem;">Твій архетип:</p>
+        <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-size: 0.9rem; font-weight: bold;">Твій архетип:</p>
         <div class="result-name" id="res-name">Персонаж</div>
         
         <div class="result-section">
@@ -179,7 +184,7 @@
             <p id="res-strengths">Опис сил...</p>
         </div>
         <div class="result-section">
-            <h3>Слабкості:</h3>
+            <h3>Слабкі сторони (Слабкості):</h3>
             <p id="res-weaknesses">Опис слабкостей...</p>
         </div>
 
@@ -197,7 +202,7 @@
         },
         moses: {
             name: "Мойсей",
-            traits: "Скромний, системний та глибоко відданий вищій меті провідник. Ти готовий брати на себе відповідальність за інших у часи серйозних криз.",
+            traits: "Скромний, системний та глибоко відданий вищій меті провідник. Ти готовий брати на себе ответственность за інших у часи серйозних криз.",
             strengths: "Глибоке почуття справедливості, залізна дисципліна та жертовність заради суспільного блага.",
             weaknesses: "Схильність до самосумнівів, надмірний перфекціонізм та рідкісні, але руйнівні спалахи гніву."
         },
@@ -232,7 +237,7 @@
         { A: "Бути яскравим лідером у центрі уваги суспільства", B: "Керувати процесами з тіні, залишаючись непомітним", scoreA: {david: 2, peter: 1, solomon: 1}, scoreB: {joseph: 2, moses: 1} },
         { A: "Вміти вчасно і публічно визнати, що ти був не правий", B: "Стояти на своєму до кінця, захищаючи свій авторитет", scoreA: {david: 2, peter: 2}, scoreB: {solomon: 2, moses: 1} },
         { A: "Організовувати чітку роботу структур, законів та логістики", B: "Запалювати натовп харизмою, вірою та палкими промовами", scoreA: {joseph: 2, moses: 2}, scoreB: {peter: 2, david: 2} },
-        { A: "Важко переживати кризи наодинці, замикаючись у собі", B: "Швидко мобілізуватися і шукати практичний вихід", scoreA: {david: 2, moses: 1}, scoreB: {joseph: 2, peter: 2, solomon: 1} },
+        { A: "Важко переживати кризи наодинці, замикаючись у собі", B: "Швидко мобілізуватися і шукай практичний вихід", scoreA: {david: 2, moses: 1}, scoreB: {joseph: 2, peter: 2, solomon: 1} },
         { A: "Шукати компроміси та вигоду для обох сторін у конфлікті", B: "Іти на безкомпромісний радикальний крок заради ідеї", scoreA: {solomon: 3, joseph: 1}, scoreB: {moses: 2, peter: 2} },
         { A: "Захоплюватися деталями, прагнути до ідеалу в усьому", B: "Бачити картину загалом, не чіпляючись до дрібниць", scoreA: {moses: 2, joseph: 1}, scoreB: {david: 2, solomon: 1} },
         { A: "Успішно управляти фінансами та матеріальними ресурсами", B: "Фокусуватися на духовних чи ідеологічних цінностях", scoreA: {solomon: 2, joseph: 2}, scoreB: {moses: 2, david: 1} },
@@ -305,7 +310,6 @@
         updateCard();
     }
 
-    // Запуск гри
     updateCard();
 </script>
 
