@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хто ти з біблійних персонажів?</title>
+    <style>
+        :root {
+            --bg-color: #1a1a24;
+            --card-bg: #252538;
+            --accent: #d4af37;
+            --text-color: #f5f5f7;
+            --text-muted: #a0a0b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #33334d;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 30px 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 160px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.5;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(212, 175, 55, 0.15);
+        }
+
+        .result-box {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px 30px;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #33334d;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .result-name {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .result-section h3 {
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .result-section p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .btn-restart {
+            margin-top: 30px;
+            background-color: var(--accent);
+            color: #111;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-restart:hover {
+            opacity: 0.9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="quiz-container">
+    <h1 id="title">Хто ти з біблійних персонажів?</h1>
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+    
+    <div class="cards-container" id="cards-wrapper">
+        <div class="card" id="cardA" onclick="makeChoice('A')">Варіант А</div>
+        <div class="card" id="cardB" onclick="makeChoice('B')">Варіант Б</div>
+    </div>
+</div>
+
+<div class="container" style="max-width: 600px;">
+    <div class="result-box" id="result-container">
+        <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-size: 0.9rem;">Твій архетип:</p>
+        <div class="result-name" id="res-name">Персонаж</div>
+        
+        <div class="result-section">
+            <h3>Характер:</h3>
+            <p id="res-traits">Опис якостей...</p>
+        </div>
+        <div class="result-section">
+            <h3>Сильні сторони:</h3>
+            <p id="res-strengths">Опис сил...</p>
+        </div>
+        <div class="result-section">
+            <h3>Слаbase сторін (Слабкості):</h3>
+            <p id="res-weaknesses">Опис слабкостей...</p>
+        </div>
+
+        <button class="btn-restart" onclick="restartGame()">Пройти ще раз</button>
+    </div>
+</div>
+
+<script>
+    const characters = {
+        david: {
+            name: "Давид",
+            traits: "Харизматичний, пристрасний та емпатичний лідер. Ти керуєшся серцем, тонко відчуваєш мистецтво і не боїшся визнавати свої емоційні помилки.",
+            strengths: "Абсолютна безстрашність перед великими викликами, щирість, творче та нестандартне мислення.",
+            weaknesses: "Імпульсивність, піддатливість миттєвим пристрастям та емоційні гойдалки."
+        },
+        moses: {
+            name: "Мойсей",
+            traits: "Скромний, системний та глибоко відданий вищій меті провідник. Ти готовий брати на себе відповідальність за інших у часи серйозних криз.",
+            strengths: "Глибоке почуття справедливості, залізна дисципліна та жертовність заради суспільного блага.",
+            weaknesses: "Схильність до самосумнівів, надмірний перфекціонізм та рідкісні, але руйнівні спалахи гніву."
+        },
+        solomon: {
+            name: "Соломон",
+            traits: "Інтелектуал, прагматик та естет, орієнтований на довгострокову стабільність. Тобі простіше домовитися розумом, ніж діяти силою.",
+            strengths: "Геніальний аналітичний розум, видатна дипломатія та масштабне бачення великих проектів.",
+            weaknesses: "Марнославство, любов до надмірної розкоші та схильність до компромісів із власним сумлінням."
+        },
+        peter: {
+            name: "Петро",
+            traits: "Прямолінійний, енергійний та палкий практик. Ти людина дії, яка завжди готова першою кинутися в бій за те, у що щиро вірить.",
+            strengths: "Максимальна відданість справі, рішучість і неймовірна швидкість прийняття рішень.",
+            weaknesses: "Нестабільність під жорстким психологічним тиском та схильність спочатку робити, а потім думати."
+        },
+        joseph: {
+            name: "Йосип",
+            traits: "Працьовитий, стриманий та холоднокровний кризовий менеджер. Ти володієш стратегічним мисленням і вмієш прощати навіть найважчі удари в спину.",
+            strengths: "Феноменальна стресостійкість, прорахунок ситуації на роки вперед та бездоганна внутрішня дисципліна.",
+            weaknesses: "Юнацька наївність на початку життєвого шляху та надмірна прямота, яка може дратувати оточуючих."
+        }
+    };
+
+    const questions = [
+        { A: "Довіряти інтуїції, імпульсу та серцю", B: "Керуватися виключно холодною логікою та планом", scoreA: {david: 2, peter: 1}, scoreB: {joseph: 2, solomon: 2, moses: 1} },
+        { A: "Діяти негайно, навіть якщо є ризик помилки", B: "Перечекати, детально проаналізувати ситуацію", scoreA: {peter: 2, david: 1}, scoreB: {solomon: 2, joseph: 2, moses: 1} },
+        { A: "Знаходити віддушину в творчості, музиці, емоціях", B: "Цінувати системні знання, філософію, архітектуру", scoreA: {david: 3}, scoreB: {solomon: 3} },
+        { A: "Легко прощати людям їхні помилки та зради", B: "Суворо вимагати дотримання правил і справедливості", scoreA: {joseph: 2, david: 1}, scoreB: {moses: 2, solomon: 1} },
+        { A: "Мислити масштабно, будувати великі та дорогі проекти", B: "Обирати скромність, аскетизм та мінімалізм у житті", scoreA: {solomon: 3, david: 1}, scoreB: {moses: 2, joseph: 1} },
+        { A: "Говорити правду прямо в очі, навіть якщо це небезпечно", B: "Прораховувати дипломатичні кроки задля загального миру", scoreA: {peter: 2, moses: 1}, scoreB: {solomon: 2, joseph: 2} },
+        { A: "Важко стримувати гнів, коли бачиш несправедливість", B: "Зберігати повний спокій та покерфейс за будь-яких умов", scoreA: {moses: 2, peter: 2}, scoreB: {joseph: 3} },
+        { A: "Бути яскравим лідером у центрі уваги суспільства", B: "Керувати процесами з тіні, залишаючись непомітним", scoreA: {david: 2, peter: 1, solomon: 1}, scoreB: {joseph: 2, moses: 1} },
+        { A: "Вміти вчасно і публічно визнати, що ти був не правий", B: "Стояти на своєму до кінця, захищаючи свій авторитет", scoreA: {david: 2, peter: 2}, scoreB: {solomon: 2, moses: 1} },
+        { A: "Організовувати чітку роботу структур, законів та логістики", B: "Запалювати натовп харизмою, вірою та палкими промовами", scoreA: {joseph: 2, moses: 2}, scoreB: {peter: 2, david: 2} },
+        { A: "Важко переживати кризи наодинці, замикаючись у собі", B: "Швидко мобілізуватися і шукати практичний вихід", scoreA: {david: 2, moses: 1}, scoreB: {joseph: 2, peter: 2, solomon: 1} },
+        { A: "Шукати компроміси та вигоду для обох сторін у конфлікті", B: "Іти на безкомпромісний радикальний крок заради ідеї", scoreA: {solomon: 3, joseph: 1}, scoreB: {moses: 2, peter: 2} },
+        { A: "Захоплюватися деталями, прагнути до ідеалу в усьому", B: "Бачити картину загалом, не чіпляючись до дрібниць", scoreA: {moses: 2, joseph: 1}, scoreB: {david: 2, solomon: 1} },
+        { A: "Успішно управляти фінансами та матеріальними ресурсами", B: "Фокусуватися на духовних чи ідеологічних цінностях", scoreA: {solomon: 2, joseph: 2}, scoreB: {moses: 2, david: 1} },
+        { A: "Діяти самостійно, покладаючись лише на власні сили", B: "Будувати міцну команду та делегувати обов'язки", scoreA: {peter: 2, david: 1}, scoreB: {moses: 2, joseph: 2, solomon: 1} },
+        { A: "Швидко адаптуватися до нових жорстких умов життя", B: "Важко змінювати звичний устрій та адаптуватися до змін", scoreA: {joseph: 3, peter: 1}, scoreB: {solomon: 2, moses: 1} },
+        { A: "Бути схильним до глибокого самоаналізу та рефлексії", B: "Жити теперішнім моментом, вирішуючи проблеми по мірі надходження", scoreA: {david: 2, moses: 2}, scoreB: {peter: 2} },
+        { A: "Прагнути стабільності та довготривалого спокою", B: "Потребувати постійної динаміки, викликів та боротьби", scoreA: {solomon: 2, joseph: 2}, scoreB: {peter: 2, david: 1, moses: 1} },
+        { A: "Цінувати традиції, перевірені часом правила", B: "Шукати нові, революційні інноваційні підходи", scoreA: {moses: 2, solomon: 1}, scoreB: {david: 2, joseph: 1, peter: 1} },
+        { A: "Захищати слабких, виявляючи емпатію та милосердя", B: "Виховувати в людях силу та характер через суворість", scoreA: {david: 2, joseph: 1}, scoreB: {moses: 2, peter: 1} },
+        { A: "Бути вразливим до критики з боку близьких", B: "Мати залізна броню до чужої думки та хейту", scoreA: {david: 2, moses: 2}, scoreB: {joseph: 2, solomon: 1} },
+        { A: "Легко захоплюватися новими ідеями чи людьми", B: "Довго приглядатися, перш ніж виявити довіру", scoreA: {peter: 2, david: 1}, scoreB: {joseph: 2, solomon: 2} },
+        { A: "Шукати глибокі причинно-наслідкові зв'язки в усьому", B: "Оцінювати факти виключно по їхньому видимому результату", scoreA: {moses: 2, solomon: 1}, scoreB: {peter: 2, joseph: 1} },
+        { A: "Мати високі амбіції та прагнути визнання суспільства", B: "Бути задоволеним виконанням свого обов'язку без зайвих лаврів", scoreA: {solomon: 2, david: 2}, scoreB: {joseph: 2, moses: 2} },
+        { A: "Довіряти людям на слово, вірити в їхні найкращі наміри", B: "Прораховувати можливі ризики зради та підстраховуватися", scoreA: {peter: 2, david: 1}, scoreB: {joseph: 2, solomon: 2} }
+    ];
+
+    let currentStep = 0;
+    let scores = { david: 0, moses: 0, solomon: 0, peter: 0, joseph: 0 };
+
+    function updateCard() {
+        if (currentStep < questions.length) {
+            const q = questions[currentStep];
+            document.getElementById('cardA').innerText = q.A;
+            document.getElementById('cardB').innerText = q.B;
+            document.getElementById('progress').style.width = `${(currentStep / questions.length) * 100}%`;
+        } else {
+            showResult();
+        }
+    }
+
+    function makeChoice(option) {
+        const q = questions[currentStep];
+        const currentScores = option === 'A' ? q.scoreA : q.scoreB;
+        
+        for (let char in currentScores) {
+            scores[char] += currentScores[char];
+        }
+        
+        currentStep++;
+        updateCard();
+    }
+
+    function showResult() {
+        document.getElementById('quiz-container').style.display = 'none';
+        
+        let winner = 'david';
+        let maxScore = -1;
+        
+        for (let char in scores) {
+            if (scores[char] > maxScore) {
+                maxScore = scores[char];
+                winner = char;
+            }
+        }
+        
+        const data = characters[winner];
+        document.getElementById('res-name').innerText = data.name;
+        document.getElementById('res-traits').innerText = data.traits;
+        document.getElementById('res-strengths').innerText = data.strengths;
+        document.getElementById('res-weaknesses').innerText = data.weaknesses;
+        
+        document.getElementById('result-container').style.display = 'block';
+    }
+
+    function restartGame() {
+        currentStep = 0;
+        scores = { david: 0, moses: 0, solomon: 0, peter: 0, joseph: 0 };
+        document.getElementById('result-container').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        updateCard();
+    }
+
+    // Запуск гри
+    updateCard();
+</script>
+
+</body>
+</html>
